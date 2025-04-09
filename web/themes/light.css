@@ -121,7 +121,8 @@ html[data-theme="light"] {
   --color-components-toggle-bg-unchecked-disabled: #f2f4f7;
   --color-components-toggle-knob-hover: #ffffff;
 
-  --color-components-card-bg: #fcfcfd;
+  /* --color-components-card-bg: #fcfcfd; */
+  --color-components-card-bg: #f2f4f7;
   --color-components-card-border: #ffffff;
   --color-components-card-bg-alt: #ffffff;
 
@@ -137,7 +138,8 @@ html[data-theme="light"] {
   --color-components-panel-gradient-2: #f9fafb;
   --color-components-panel-gradient-1: #ffffff;
   --color-components-panel-bg-alt: #f9fafb;
-  --color-components-panel-on-panel-item-bg: #ffffff;
+  /* --color-components-panel-on-panel-item-bg: #ffffff; */
+  --color-components-panel-on-panel-item-bg: #f2f4f7;
   --color-components-panel-on-panel-item-bg-hover: #f9fafb;
   --color-components-panel-on-panel-item-bg-alt: #f9fafb;
   --color-components-panel-on-panel-item-bg-transparent: #fffffff2;
@@ -376,7 +378,9 @@ html[data-theme="light"] {
   --color-text-inverted: #000000;
   --color-text-inverted-dimmed: #000000f2;
 
-  --color-background-body: #f2f4f7;
+  /* --color-background-body: #f2f4f7; */
+  --color-background-body: #ffffff;
+
   --color-background-default-subtle: #fcfcfd;
   --color-background-neutral-subtle: #f9fafb;
   --color-background-sidenav-bg: #ffffffcc;
@@ -735,5 +739,4 @@ html[data-theme="light"] {
 
   --color-saas-background: #fcfcfd;
   --color-saas-pricing-grid-bg: #c8ceda80;
-
 }
