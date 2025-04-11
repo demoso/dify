@@ -287,8 +287,6 @@ export const ModalContextProvider = ({
     setShowOpeningModal(null);
   };
 
-  console.log("showAccountSettingModal-----", showAccountSettingModal);
-
   return (
     <ModalContext.Provider
       value={{
