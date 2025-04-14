@@ -383,7 +383,8 @@ html[data-theme="light"] {
   /* --color-background-body: #f2f4f7; */
   --color-background-body: #ffffff;
 
-  --color-background-default-subtle: #fcfcfd;
+  /* --color-background-default-subtle: #fcfcfd; */
+  --color-background-default-subtle: #ffffff;
   --color-background-neutral-subtle: #f9fafb;
   --color-background-sidenav-bg: #ffffffcc;
   --color-background-default: #ffffff;
