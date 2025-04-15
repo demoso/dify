@@ -56,7 +56,7 @@ const PluginsPanel = () => {
   return (
     <div className="bg-components-panel-bg rounded-b-lg">
       <div className="flex flex-col items-start justify-center gap-3 self-stretch px-12 pb-3 pt-1">
-        <div className="h-px self-stretch bg-divider-subtle"></div>
+        {/* <div className="h-px self-stretch bg-divider-subtle"></div> */}
         <FilterManagement onFilterChange={handleFilterChange} />
       </div>
       {isPluginListLoading ? (

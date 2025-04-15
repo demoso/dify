@@ -154,7 +154,7 @@ const PluginPage = ({ plugins, marketplace }: PluginPageProps) => {
         "bg-default-background px-4"
       )}
     >
-      <div className="bg-default-background sticky top-0 z-10 pt-4 ">
+      <div className="bg-default-background sticky top-0 z-10 pt-4 border-b-2 border-default-background">
         <div
           className={cn(
             "flex min-h-[60px] items-center gap-1 self-stretch bg-components-panel-bg px-12 pb-2 pt-4 rounded-t-lg",
