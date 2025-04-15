@@ -39,6 +39,8 @@ const Container = () => {
     useExternalApiPanel();
   const [includeAll, { toggle: toggleIncludeAll }] = useBoolean(false);
 
+  document.title = `${t('dataset.knowledge')} - Dify`
+
   const options = useMemo(() => {
     return [
       { value: "dataset", text: t("dataset.datasets") },

@@ -198,7 +198,7 @@ const handleStream = (
                 string,
                 any
               >; // remove data: and parse as json
-            } catch (e) {
+            } catch {
               // mute handle message cut off
               onData("", isFirstMessage, {
                 conversationId: bufferObj?.conversation_id,
@@ -416,7 +416,7 @@ export const ssePost = (
   globalThis
     .fetch(urlWithPrefix, options as RequestInit)
     .then((res) => {
-      if (!/^(2|3)\d{2}$/.test(String(res.status))) {
+      if (!/^[23]\d{2}$/.test(String(res.status))) {
         if (res.status === 401) {
           refreshAccessTokenOrRelogin(TIME_OUT)
             .then(() => {

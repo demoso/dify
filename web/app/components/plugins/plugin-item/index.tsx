@@ -4,6 +4,7 @@ import React, { useMemo } from "react";
 import {
   RiArrowRightUpLine,
   RiBugLine,
+  RiErrorWarningLine,
   RiHardDrive3Line,
   RiLoginCircleLine,
   RiVerifiedBadgeLine,
@@ -23,6 +24,9 @@ import { API_PREFIX, MARKETPLACE_URL_PREFIX } from "@/config";
 import { useSingleCategories } from "../hooks";
 import { useRenderI18nObject } from "@/hooks/use-i18n";
 import useRefreshPluginList from "@/app/components/plugins/install-plugin/hooks/use-refresh-plugin-list";
+import { useAppContext } from "@/context/app-context";
+import { gte } from "semver";
+import Tooltip from "@/app/components/base/tooltip";
 
 type Props = {
   className?: string;
@@ -45,14 +49,35 @@ const PluginItem: FC<Props> = ({ className, plugin }) => {
     meta,
     plugin_id,
   } = plugin;
-  const { category, author, name, label, description, icon, verified } =
-    plugin.declaration;
+  const {
+    category,
+    author,
+    name,
+    label,
+    description,
+    icon,
+    verified,
+    meta: declarationMeta,
+  } = plugin.declaration;
 
   const orgName = useMemo(() => {
     return [PluginSource.github, PluginSource.marketplace].includes(source)
       ? author
       : "";
   }, [source, author]);
+
+  const { langeniusVersionInfo } = useAppContext();
+
+  const isDifyVersionCompatible = useMemo(() => {
+    if (!langeniusVersionInfo.current_version) return true;
+    return gte(
+      langeniusVersionInfo.current_version,
+      declarationMeta.minimum_dify_version ?? "0.0.0"
+    );
+  }, [
+    declarationMeta.minimum_dify_version,
+    langeniusVersionInfo.current_version,
+  ]);
 
   const handleDelete = () => {
     refreshPluginList({ category } as any);
@@ -91,6 +116,18 @@ const PluginItem: FC<Props> = ({ className, plugin }) => {
               <Title title={title} />
               {verified && (
                 <RiVerifiedBadgeLine className="ml-0.5 h-4 w-4 shrink-0 text-text-accent" />
+              )}
+              {!isDifyVersionCompatible && (
+                <Tooltip
+                  popupContent={t("plugin.difyVersionNotCompatible", {
+                    minimalDifyVersion: declarationMeta.minimum_dify_version,
+                  })}
+                >
+                  <RiErrorWarningLine
+                    color="red"
+                    className="ml-0.5 h-4 w-4 shrink-0 text-text-accent"
+                  />
+                </Tooltip>
               )}
               <Badge
                 className="ml-1 shrink-0"

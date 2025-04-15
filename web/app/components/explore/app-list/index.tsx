@@ -159,7 +159,7 @@ const Apps = ({ onSuccess }: AppsProps) => {
       if (app.app_id) await handleCheckPluginDependencies(app.app_id);
       localStorage.setItem(NEED_REFRESH_APP_LIST_KEY, "1");
       getRedirection(isCurrentWorkspaceEditor, { id: app.app_id!, mode }, push);
-    } catch (e) {
+    } catch {
       Toast.notify({ type: "error", message: t("app.newApp.appCreateFailed") });
     }
   };

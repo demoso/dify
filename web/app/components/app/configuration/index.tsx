@@ -257,7 +257,6 @@ const Configuration: FC = () => {
   const isOpenAI = modelConfig.provider === "langgenius/openai/openai";
 
   const [collectionList, setCollectionList] = useState<Collection[]>([]);
-  useEffect(() => {}, []);
   const [datasetConfigs, doSetDatasetConfigs] = useState<DatasetConfigs>({
     retrieval_model: RETRIEVE_TYPE.multiWay,
     reranking_model: {
@@ -289,7 +288,7 @@ const Configuration: FC = () => {
 
   const [dataSets, setDataSets] = useState<DataSet[]>([]);
   const contextVar = modelConfig.configs.prompt_variables.find(
-    (item: any) => item.is_context_var
+    (item) => item.is_context_var
   )?.key;
   const hasSetContextVar = !!contextVar;
   const [
@@ -319,7 +318,7 @@ const Configuration: FC = () => {
     let newDatasets = data;
     if (data.find((item) => !item.name)) {
       // has not loaded selected dataset
-      const newSelected = produce(data, (draft: any) => {
+      const newSelected = produce(data, (draft) => {
         data.forEach((item, index) => {
           if (!item.name) {
             // not fetched database
@@ -668,7 +667,7 @@ const Configuration: FC = () => {
             modelConfig.chat_prompt_config.prompt.length > 0
           )
             setChatPromptConfig(modelConfig.chat_prompt_config);
-          else setChatPromptConfig(clone(DEFAULT_CHAT_PROMPT_CONFIG) as any);
+          else setChatPromptConfig(clone(DEFAULT_CHAT_PROMPT_CONFIG));
           setCompletionPromptConfig(
             modelConfig.completion_prompt_config ||
               (clone(DEFAULT_COMPLETION_PROMPT_CONFIG) as any)

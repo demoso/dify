@@ -1,14 +1,15 @@
-import Link from "next/link";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useContext } from "use-context-selector";
-import Button from "@/app/components/base/button";
-import Toast from "@/app/components/base/toast";
-import { emailRegex } from "@/config";
-import { login } from "@/service/common";
-import Input from "@/app/components/base/input";
-import I18NContext from "@/context/i18n";
+import Link from 'next/link'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useContext } from 'use-context-selector'
+import Button from '@/app/components/base/button'
+import Toast from '@/app/components/base/toast'
+import { emailRegex } from '@/config'
+import { login } from '@/service/common'
+import Input from '@/app/components/base/input'
+import I18NContext from '@/context/i18n'
+import { noop } from 'lodash-es'
 
 type MailAndPasswordAuthProps = {
   isInvite: boolean;
@@ -103,28 +104,24 @@ export default function MailAndPasswordAuth({
     }
   };
 
-  return (
-    <form onSubmit={() => {}}>
-      <div className="mb-3">
-        <label
-          htmlFor="email"
-          className="system-md-semibold my-2 text-text-secondary"
-        >
-          {t("login.email")}
-        </label>
-        <div className="mt-1">
-          <Input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            disabled={isInvite}
-            id="email"
-            type="email"
-            autoComplete="email"
-            placeholder={t("login.emailPlaceholder") || ""}
-            tabIndex={1}
-          />
-        </div>
+  return <form onSubmit={noop}>
+    <div className='mb-3'>
+      <label htmlFor="email" className="system-md-semibold my-2 text-text-secondary">
+        {t('login.email')}
+      </label>
+      <div className="mt-1">
+        <Input
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          disabled={isInvite}
+          id="email"
+          type="email"
+          autoComplete="email"
+          placeholder={t('login.emailPlaceholder') || ''}
+          tabIndex={1}
+        />
       </div>
+    </div>
 
       <div className="mb-3">
         <label

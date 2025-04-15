@@ -28,7 +28,7 @@ const LogAnnotation: FC<Props> = ({ pageType }) => {
       { value: PageType.log, text: t("appLog.title") },
       { value: PageType.annotation, text: t("appAnnotation.title") },
     ];
-  }, [appDetail]);
+  }, [appDetail?.mode, t]);
 
   if (!appDetail) {
     return (
