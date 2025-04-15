@@ -64,30 +64,51 @@ const Apps = () => {
     useAppContext();
   const showTagManagementModal = useTagStore((s) => s.showTagManagementModal);
   const [activeTab, setActiveTab] = useTabSearchParams({
-    defaultTab: 'all',
-  })
-  const { query: { tagIDs = [], keywords = '', isCreatedByMe: queryIsCreatedByMe = false }, setQuery } = useAppsQueryState()
-  const [isCreatedByMe, setIsCreatedByMe] = useState(queryIsCreatedByMe)
-  const [tagFilterValue, setTagFilterValue] = useState<string[]>(tagIDs)
-  const [searchKeywords, setSearchKeywords] = useState(keywords)
-  const newAppCardRef = useRef<HTMLDivElement>(null)
-  const setKeywords = useCallback((keywords: string) => {
-    setQuery(prev => ({ ...prev, keywords }))
-  }, [setQuery])
-  const setTagIDs = useCallback((tagIDs: string[]) => {
-    setQuery(prev => ({ ...prev, tagIDs }))
-  }, [setQuery])
+    defaultTab: "all",
+  });
+  const {
+    query: {
+      tagIDs = [],
+      keywords = "",
+      isCreatedByMe: queryIsCreatedByMe = false,
+    },
+    setQuery,
+  } = useAppsQueryState();
+  const [isCreatedByMe, setIsCreatedByMe] = useState(queryIsCreatedByMe);
+  const [tagFilterValue, setTagFilterValue] = useState<string[]>(tagIDs);
+  const [searchKeywords, setSearchKeywords] = useState(keywords);
+  const newAppCardRef = useRef<HTMLDivElement>(null);
+  const setKeywords = useCallback(
+    (keywords: string) => {
+      setQuery((prev) => ({ ...prev, keywords }));
+    },
+    [setQuery]
+  );
+  const setTagIDs = useCallback(
+    (tagIDs: string[]) => {
+      setQuery((prev) => ({ ...prev, tagIDs }));
+    },
+    [setQuery]
+  );
 
   const { data, isLoading, error, setSize, mutate } = useSWRInfinite(
-    (pageIndex: number, previousPageData: AppListResponse) => getKey(pageIndex, previousPageData, activeTab, isCreatedByMe, tagIDs, searchKeywords),
+    (pageIndex: number, previousPageData: AppListResponse) =>
+      getKey(
+        pageIndex,
+        previousPageData,
+        activeTab,
+        isCreatedByMe,
+        tagIDs,
+        searchKeywords
+      ),
     fetchAppList,
     {
       revalidateFirstPage: true,
       shouldRetryOnError: false,
       dedupingInterval: 500,
       errorRetryCount: 3,
-    },
-  )
+    }
+  );
 
   const anchorRef = useRef<HTMLDivElement>(null);
   const options = [
@@ -136,24 +157,26 @@ const Apps = () => {
   }, [router, isCurrentWorkspaceDatasetOperator]);
 
   useEffect(() => {
-    const hasMore = data?.at(-1)?.has_more ?? true
-    let observer: IntersectionObserver | undefined
+    const hasMore = data?.at(-1)?.has_more ?? true;
+    let observer: IntersectionObserver | undefined;
 
     if (error) {
-      if (observer)
-        observer.disconnect()
-      return
+      if (observer) observer.disconnect();
+      return;
     }
 
     if (anchorRef.current) {
-      observer = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && !isLoading && !error && hasMore)
-          setSize((size: number) => size + 1)
-      }, { rootMargin: '100px' })
-      observer.observe(anchorRef.current)
+      observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting && !isLoading && !error && hasMore)
+            setSize((size: number) => size + 1);
+        },
+        { rootMargin: "100px" }
+      );
+      observer.observe(anchorRef.current);
     }
-    return () => observer?.disconnect()
-  }, [isLoading, setSize, anchorRef, mutate, data, error])
+    return () => observer?.disconnect();
+  }, [isLoading, setSize, anchorRef, mutate, data, error]);
 
   const { run: handleSearch } = useDebounceFn(
     () => {
@@ -185,8 +208,7 @@ const Apps = () => {
 
   return (
     <div className="bg-default-background px-4 pb-4 min-h-full overflow-y-auto">
-      <div className="sticky top-0 z-10">
-        <div className="bg-default-background h-4"></div>
+      <div className="sticky top-0 z-10 bg-default-background pt-4">
         <div className="bg-background-body flex flex-wrap items-center justify-between border-b-2 border-default-background rounded-t-lg gap-y-2 px-12 pb-2 pt-4 leading-[56px]">
           <TabSliderNew
             value={activeTab}
@@ -216,17 +238,26 @@ const Apps = () => {
           </div>
         </div>
       </div>
-      {(data && data[0].total > 0)
-        ? <div className='relative grid grow grid-cols-1 content-start gap-4 px-12 pt-2 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5 2k:grid-cols-6'>
-          {isCurrentWorkspaceEditor
-            && <NewAppCard ref={newAppCardRef} onSuccess={mutate} />}
-          {data.map(({ data: apps }) => apps.map(app => (
-            <AppCard key={app.id} app={app} onRefresh={mutate} />
-          )))}
+      {data && data[0].total > 0 ? (
+        <div className="bg-background-body relative grid grow grid-cols-1 content-start gap-4 px-12 pt-2 pb-4 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5 2k:grid-cols-6">
+          {isCurrentWorkspaceEditor && (
+            <NewAppCard ref={newAppCardRef} onSuccess={mutate} />
+          )}
+          {data.map(({ data: apps }) =>
+            apps.map((app) => (
+              <AppCard key={app.id} app={app} onRefresh={mutate} />
+            ))
+          )}
         </div>
-        : <div className='relative grid grow grid-cols-1 content-start gap-4 overflow-hidden px-12 pt-2 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5 2k:grid-cols-6'>
-          {isCurrentWorkspaceEditor
-            && <NewAppCard ref={newAppCardRef} className='z-10' onSuccess={mutate} />}
+      ) : (
+        <div className="relative grid grow grid-cols-1 content-start gap-4 overflow-hidden px-12 pt-2 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5 2k:grid-cols-6">
+          {isCurrentWorkspaceEditor && (
+            <NewAppCard
+              ref={newAppCardRef}
+              className="z-10"
+              onSuccess={mutate}
+            />
+          )}
           <NoAppsFound />
         </div>
       )}

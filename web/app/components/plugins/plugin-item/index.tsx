@@ -89,7 +89,7 @@ const PluginItem: FC<Props> = ({ className, plugin }) => {
   return (
     <div
       className={cn(
-        "rounded-xl border-[1.5px] border-background-section-burn p-1 bg-components-panel-on-panel-item-bg",
+        "rounded-xl border-[1.5px] border-background-section-burn p-1",
         currentPluginID === plugin_id &&
           "border-components-option-card-option-selected-border",
         source === PluginSource.debugging
@@ -100,7 +100,12 @@ const PluginItem: FC<Props> = ({ className, plugin }) => {
         setCurrentPluginID(plugin.plugin_id);
       }}
     >
-      <div className={cn("relative p-4 pb-3", className)}>
+      <div
+        className={cn(
+          "hover-bg-components-panel-on-panel-item-bg relative rounded-xl border-[0.5px] border-components-panel-border bg-components-panel-on-panel-item-bg p-4 pb-3 shadow-xs",
+          className
+        )}
+      >
         <CornerMark text={categoriesMap[category].label} />
         {/* Header */}
         <div className="flex">

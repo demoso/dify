@@ -29,80 +29,51 @@ import type { Dependency } from "../types";
 import type { PluginDeclaration, PluginManifestInMarket } from "../types";
 import { sleep } from "@/utils";
 import {
-  PluginPageContextProvider,
-  usePluginPageContext,
-} from './context'
-import InstallPluginDropdown from './install-plugin-dropdown'
-import { useUploader } from './use-uploader'
-import usePermission from './use-permission'
-import DebugInfo from './debug-info'
-import PluginTasks from './plugin-tasks'
-import Button from '@/app/components/base/button'
-import TabSlider from '@/app/components/base/tab-slider'
-import Tooltip from '@/app/components/base/tooltip'
-import cn from '@/utils/classnames'
-import PermissionSetModal from '@/app/components/plugins/permission-setting-modal/modal'
-import { useSelector as useAppContextSelector } from '@/context/app-context'
-import InstallFromMarketplace from '../install-plugin/install-from-marketplace'
-import {
-  useRouter,
-  useSearchParams,
-} from 'next/navigation'
-import type { Dependency } from '../types'
-import type { PluginDeclaration, PluginManifestInMarket } from '../types'
-import { sleep } from '@/utils'
-import { fetchBundleInfoFromMarketPlace, fetchManifestFromMarketPlace } from '@/service/plugins'
-import { marketplaceApiPrefix } from '@/config'
-import { SUPPORT_INSTALL_LOCAL_FILE_EXTENSIONS } from '@/config'
-import { LanguagesSupported } from '@/i18n/language'
-import I18n from '@/context/i18n'
-import { noop } from 'lodash-es'
-import { PLUGIN_TYPE_SEARCH_MAP } from '../marketplace/plugin-type-switch'
-import { PLUGIN_PAGE_TABS_MAP } from '../hooks'
+  fetchBundleInfoFromMarketPlace,
+  fetchManifestFromMarketPlace,
+} from "@/service/plugins";
+import { marketplaceApiPrefix } from "@/config";
+import { SUPPORT_INSTALL_LOCAL_FILE_EXTENSIONS } from "@/config";
+import { LanguagesSupported } from "@/i18n/language";
+import I18n from "@/context/i18n";
+import { noop } from "lodash-es";
+import { PLUGIN_TYPE_SEARCH_MAP } from "../marketplace/plugin-type-switch";
+import { PLUGIN_PAGE_TABS_MAP } from "../hooks";
 
 const PACKAGE_IDS_KEY = "package-ids";
 const BUNDLE_INFO_KEY = "bundle-info";
 
 export type PluginPageProps = {
-  plugins: React.ReactNode
-  marketplace: React.ReactNode
-}
-const PluginPage = ({
-  plugins,
-  marketplace,
-}: PluginPageProps) => {
-  const { t } = useTranslation()
-  const { locale } = useContext(I18n)
-  const searchParams = useSearchParams()
-  const { replace } = useRouter()
+  plugins: React.ReactNode;
+  marketplace: React.ReactNode;
+};
+const PluginPage = ({ plugins, marketplace }: PluginPageProps) => {
+  const { t } = useTranslation();
+  const { locale } = useContext(I18n);
+  const searchParams = useSearchParams();
+  const { replace } = useRouter();
 
-  document.title = `${t('plugin.metadata.title')} - Dify`
+  document.title = `${t("plugin.metadata.title")} - Dify`;
 
   // just support install one package now
   const packageId = useMemo(() => {
     const idStrings = searchParams.get(PACKAGE_IDS_KEY);
     try {
       return idStrings ? JSON.parse(idStrings)[0] : "";
-    } catch (e) {
+    } catch {
       return "";
     }
-    catch {
-      return ''
-    }
-  }, [searchParams])
+  }, [searchParams]);
 
   const [dependencies, setDependencies] = useState<Dependency[]>([]);
   const bundleInfo = useMemo(() => {
     const info = searchParams.get(BUNDLE_INFO_KEY);
     try {
       return info ? JSON.parse(info) : undefined;
-    } catch (e) {
+    } catch {
       return undefined;
     }
-    catch {
-      return undefined
-    }
-  }, [searchParams])
+  }, [searchParams]);
 
   const [
     isShowInstallFromMarketplace,
@@ -154,90 +125,102 @@ const PluginPage = ({
     canSetPermissions,
     permissions,
     setPermissions,
-  } = usePermission()
-  const [showPluginSettingModal, {
-    setTrue: setShowPluginSettingModal,
-    setFalse: setHidePluginSettingModal,
-  }] = useBoolean()
-  const [currentFile, setCurrentFile] = useState<File | null>(null)
-  const containerRef = usePluginPageContext(v => v.containerRef)
-  const options = usePluginPageContext(v => v.options)
-  const activeTab = usePluginPageContext(v => v.activeTab)
-  const setActiveTab = usePluginPageContext(v => v.setActiveTab)
-  const { enable_marketplace } = useAppContextSelector(s => s.systemFeatures)
+  } = usePermission();
+  const [
+    showPluginSettingModal,
+    { setTrue: setShowPluginSettingModal, setFalse: setHidePluginSettingModal },
+  ] = useBoolean();
+  const [currentFile, setCurrentFile] = useState<File | null>(null);
+  const containerRef = usePluginPageContext((v) => v.containerRef);
+  const options = usePluginPageContext((v) => v.options);
+  const activeTab = usePluginPageContext((v) => v.activeTab);
+  const setActiveTab = usePluginPageContext((v) => v.setActiveTab);
+  const { enable_marketplace } = useAppContextSelector((s) => s.systemFeatures);
 
-  const isPluginsTab = useMemo(() => activeTab === PLUGIN_PAGE_TABS_MAP.plugins, [activeTab])
+  const isPluginsTab = useMemo(
+    () => activeTab === PLUGIN_PAGE_TABS_MAP.plugins,
+    [activeTab]
+  );
   const isExploringMarketplace = useMemo(() => {
-    const values = Object.values(PLUGIN_TYPE_SEARCH_MAP)
-    return activeTab === PLUGIN_PAGE_TABS_MAP.marketplace || values.includes(activeTab)
-  }, [activeTab])
+    const values = Object.values(PLUGIN_TYPE_SEARCH_MAP);
+    return (
+      activeTab === PLUGIN_PAGE_TABS_MAP.marketplace ||
+      values.includes(activeTab)
+    );
+  }, [activeTab]);
 
   const uploaderProps = useUploader({
     onFileChange: setCurrentFile,
     containerRef,
     enabled: isPluginsTab,
-  })
+  });
 
-  const { dragging, fileUploader, fileChangeHandle, removeFile } = uploaderProps
+  const { dragging, fileUploader, fileChangeHandle, removeFile } =
+    uploaderProps;
   return (
     <div
       id="marketplace-container"
       ref={containerRef}
-      style={{ scrollbarGutter: 'stable' }}
-      className={cn('relative flex grow flex-col overflow-y-auto border-t border-divider-subtle', isPluginsTab
-        ? 'rounded-t-xl bg-components-panel-bg'
-        : 'bg-background-body',
+      style={{ scrollbarGutter: "stable" }}
+      className={cn(
+        "relative flex grow flex-col overflow-y-auto border-t border-divider-subtle",
+        isPluginsTab
+          ? "rounded-t-xl bg-components-panel-bg"
+          : "bg-background-body"
       )}
     >
       <div
         className={cn(
-          'sticky top-0 z-10 flex min-h-[60px] items-center gap-1 self-stretch bg-components-panel-bg px-12 pb-2 pt-4', isExploringMarketplace && 'bg-background-body',
+          "sticky top-0 z-10 flex min-h-[60px] items-center gap-1 self-stretch bg-components-panel-bg px-12 pb-2 pt-4",
+          isExploringMarketplace && "bg-background-body"
         )}
       >
-        <div className='flex w-full items-center justify-between'>
-          <div className='flex-1'>
+        <div className="flex w-full items-center justify-between">
+          <div className="flex-1">
             <TabSlider
-              value={isPluginsTab ? PLUGIN_PAGE_TABS_MAP.plugins : PLUGIN_PAGE_TABS_MAP.marketplace}
+              value={
+                isPluginsTab
+                  ? PLUGIN_PAGE_TABS_MAP.plugins
+                  : PLUGIN_PAGE_TABS_MAP.marketplace
+              }
               onChange={setActiveTab}
               options={options}
             />
           </div>
-          <div className='flex shrink-0 items-center gap-1'>
-            {
-              isExploringMarketplace && (
-                <>
-                  <Link
-                    href={`https://docs.dify.ai/${
-                      locale === LanguagesSupported[1] ? "v/zh-hans/" : ""
-                    }plugins/publish-plugins/publish-to-dify-marketplace`}
-                    target="_blank"
-                  >
-                    <Button className="px-3" variant="secondary-accent">
-                      <RiBookOpenLine className="mr-1 h-4 w-4" />
-                      {t("plugin.submitPlugin")}
-                    </Button>
-                  </Link>
-                  <div className="mx-2 h-3.5 w-[1px] bg-divider-regular"></div>
-                </>
-              )}
-              <PluginTasks />
-              {canManagement && (
-                <InstallPluginDropdown
-                  onSwitchToMarketplaceTab={() => setActiveTab("discover")}
-                />
-              )}
-              {canDebugger && <DebugInfo />}
-              {canSetPermissions && (
-                <Tooltip popupContent={t("plugin.privilege.title")}>
-                  <Button
-                    className="group h-full w-full p-2 text-components-button-secondary-text"
-                    onClick={setShowPluginSettingModal}
-                  >
-                    <RiEqualizer2Line className="h-4 w-4" />
+          <div className="flex shrink-0 items-center gap-1">
+            {isExploringMarketplace && (
+              <>
+                <Link
+                  href={`https://docs.dify.ai/${
+                    locale === LanguagesSupported[1] ? "v/zh-hans/" : ""
+                  }plugins/publish-plugins/publish-to-dify-marketplace`}
+                  target="_blank"
+                >
+                  <Button className="px-3" variant="secondary-accent">
+                    <RiBookOpenLine className="mr-1 h-4 w-4" />
+                    {t("plugin.submitPlugin")}
                   </Button>
-                </Tooltip>
-              )}
-            </div>
+                </Link>
+                <div className="mx-2 h-3.5 w-[1px] bg-divider-regular"></div>
+              </>
+            )}
+            <PluginTasks />
+            {canManagement && (
+              <InstallPluginDropdown
+                onSwitchToMarketplaceTab={() => setActiveTab("discover")}
+              />
+            )}
+            {canDebugger && <DebugInfo />}
+            {canSetPermissions && (
+              <Tooltip popupContent={t("plugin.privilege.title")}>
+                <Button
+                  className="group h-full w-full p-2 text-components-button-secondary-text"
+                  onClick={setShowPluginSettingModal}
+                >
+                  <RiEqualizer2Line className="h-4 w-4" />
+                </Button>
+              </Tooltip>
+            )}
           </div>
         </div>
       </div>
@@ -277,9 +260,7 @@ const PluginPage = ({
           />
         </>
       )}
-      {
-        isExploringMarketplace && enable_marketplace && marketplace
-      }
+      {isExploringMarketplace && enable_marketplace && marketplace}
 
       {showPluginSettingModal && (
         <PermissionSetModal
