@@ -6,7 +6,10 @@ import { debounce } from 'lodash-es'
 import { useTranslation } from 'react-i18next'
 import NewDatasetCard from './NewDatasetCard'
 import DatasetCard from './DatasetCard'
-import type { DataSetListResponse, FetchDatasetsParams } from '@/models/datasets'
+import type {
+  DataSetListResponse,
+  FetchDatasetsParams,
+} from '@/models/datasets'
 import { fetchDatasets } from '@/service/datasets'
 import { useAppContext } from '@/context/app-context'
 
@@ -26,31 +29,25 @@ const getKey = (
         include_all: includeAll,
       },
     }
-    if (tags.length)
-      params.params.tag_ids = tags
-    if (keyword)
-      params.params.keyword = keyword
+    if (tags.length) params.params.tag_ids = tags
+    if (keyword) params.params.keyword = keyword
     return params
   }
   return null
 }
 
 type Props = {
-  containerRef: React.RefObject<HTMLDivElement>
-  tags: string[]
-  keywords: string
-  includeAll: boolean
+  containerRef: React.RefObject<HTMLDivElement>;
+  tags: string[];
+  keywords: string;
+  includeAll: boolean;
 }
 
-const Datasets = ({
-  containerRef,
-  tags,
-  keywords,
-  includeAll,
-}: Props) => {
+const Datasets = ({ containerRef, tags, keywords, includeAll }: Props) => {
   const { isCurrentWorkspaceEditor } = useAppContext()
   const { data, isLoading, setSize, mutate } = useSWRInfinite(
-    (pageIndex: number, previousPageData: DataSetListResponse) => getKey(pageIndex, previousPageData, tags, keywords, includeAll),
+    (pageIndex: number, previousPageData: DataSetListResponse) =>
+      getKey(pageIndex, previousPageData, tags, keywords, includeAll),
     fetchDatasets,
     { revalidateFirstPage: false, revalidateAll: true },
   )
@@ -66,7 +63,11 @@ const Datasets = ({
 
   const onScroll = useCallback(
     debounce(() => {
-      if (!loadingStateRef.current && containerRef.current && anchorRef.current) {
+      if (
+        !loadingStateRef.current
+        && containerRef.current
+        && anchorRef.current
+      ) {
         const { scrollTop, clientHeight } = containerRef.current
         const anchorOffset = anchorRef.current.offsetTop
         if (anchorOffset - scrollTop - clientHeight < 100)
@@ -86,12 +87,20 @@ const Datasets = ({
   }, [onScroll])
 
   return (
-    <nav className='grid shrink-0 grow grid-cols-1 content-start gap-4 px-12 pt-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
-      { isCurrentWorkspaceEditor && <NewDatasetCard ref={anchorRef} /> }
-      {data?.map(({ data: datasets }) => datasets.map(dataset => (
-        <DatasetCard key={dataset.id} dataset={dataset} onSuccess={mutate} />),
-      ))}
-    </nav>
+    <div className="shrink-0 px-12 pt-2">
+      <nav className="grid grow grid-cols-1 content-start gap-4 rounded-lg bg-background-body p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        {isCurrentWorkspaceEditor && <NewDatasetCard ref={anchorRef} />}
+        {data?.map(({ data: datasets }) =>
+          datasets.map(dataset => (
+            <DatasetCard
+              key={dataset.id}
+              dataset={dataset}
+              onSuccess={mutate}
+            />
+          )),
+        )}
+      </nav>
+    </div>
   )
 }
 

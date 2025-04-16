@@ -11,7 +11,7 @@ import I18n from '@/context/i18n'
 import { LanguagesSupported } from '@/i18n/language'
 
 type DocProps = {
-  apiBaseUrl: string
+  apiBaseUrl: string;
 }
 
 const Doc = ({ apiBaseUrl }: DocProps) => {
@@ -32,16 +32,20 @@ const Doc = ({ apiBaseUrl }: DocProps) => {
       const article = document.querySelector('article')
       if (article) {
         const headings = article.querySelectorAll('h2')
-        const tocItems = Array.from(headings).map((heading) => {
-          const anchor = heading.querySelector('a')
-          if (anchor) {
-            return {
-              href: anchor.getAttribute('href') || '',
-              text: anchor.textContent || '',
+        const tocItems = Array.from(headings)
+          .map((heading) => {
+            const anchor = heading.querySelector('a')
+            if (anchor) {
+              return {
+                href: anchor.getAttribute('href') || '',
+                text: anchor.textContent || '',
+              }
             }
-          }
-          return null
-        }).filter((item): item is { href: string; text: string } => item !== null)
+            return null
+          })
+          .filter(
+            (item): item is { href: string; text: string } => item !== null,
+          )
         setToc(tocItems)
       }
     }
@@ -50,7 +54,10 @@ const Doc = ({ apiBaseUrl }: DocProps) => {
   }, [locale])
 
   // Handle TOC item click
-  const handleTocClick = (e: React.MouseEvent<HTMLAnchorElement>, item: { href: string; text: string }) => {
+  const handleTocClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    item: { href: string; text: string },
+  ) => {
     e.preventDefault()
     const targetId = item.href.replace('#', '')
     const element = document.getElementById(targetId)
@@ -79,45 +86,49 @@ const Doc = ({ apiBaseUrl }: DocProps) => {
   }, [apiBaseUrl, locale])
 
   return (
-    <div className="flex">
-      <div className={`fixed right-20 top-32 z-10 transition-all ${isTocExpanded ? 'w-64' : 'w-10'}`}>
-        {isTocExpanded
-          ? (
-            <nav className="toc max-h-[calc(100vh-150px)] w-full overflow-y-auto rounded-lg bg-gray-50 p-4 shadow-md">
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-lg font-semibold">{t('appApi.develop.toc')}</h3>
-                <button
-                  onClick={() => setIsTocExpanded(false)}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  ✕
-                </button>
-              </div>
-              <ul className="space-y-2">
-                {toc.map((item, index) => (
-                  <li key={index}>
-                    <a
-                      href={item.href}
-                      className="text-gray-600 transition-colors duration-200 hover:text-gray-900 hover:underline"
-                      onClick={e => handleTocClick(e, item)}
-                    >
-                      {item.text}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          )
-          : (
-            <button
-              onClick={() => setIsTocExpanded(true)}
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 shadow-md transition-colors duration-200 hover:bg-gray-100"
-            >
-              <RiListUnordered className="h-6 w-6" />
-            </button>
-          )}
+    <div>
+      <div
+        className={`fixed right-20 top-32 z-10 transition-all ${
+          isTocExpanded ? 'w-64' : 'w-10'
+        }`}
+      >
+        {isTocExpanded ? (
+          <nav className="toc max-h-[calc(100vh-150px)] w-full overflow-y-auto rounded-lg bg-gray-50 p-4 shadow-md">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-lg font-semibold">
+                {t('appApi.develop.toc')}
+              </h3>
+              <button
+                onClick={() => setIsTocExpanded(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ✕
+              </button>
+            </div>
+            <ul className="space-y-2">
+              {toc.map((item, index) => (
+                <li key={index}>
+                  <a
+                    href={item.href}
+                    className="text-gray-600 transition-colors duration-200 hover:text-gray-900 hover:underline"
+                    onClick={e => handleTocClick(e, item)}
+                  >
+                    {item.text}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ) : (
+          <button
+            onClick={() => setIsTocExpanded(true)}
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 shadow-md transition-colors duration-200 hover:bg-gray-100"
+          >
+            <RiListUnordered className="h-6 w-6" />
+          </button>
+        )}
       </div>
-      <article className='prose-xl prose mx-1 rounded-t-xl bg-white px-4 pt-16 sm:mx-12'>
+      <article className="prose-xl prose mx-1 rounded-t-xl bg-white px-4 pt-16 sm:mx-12">
         {Template}
       </article>
     </div>

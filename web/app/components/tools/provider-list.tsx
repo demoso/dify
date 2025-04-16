@@ -1,93 +1,94 @@
-"use client";
-import { useMemo, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import type { Collection } from "./types";
-import Marketplace from "./marketplace";
-import cn from "@/utils/classnames";
-import { useTabSearchParams } from "@/hooks/use-tab-searchparams";
-import TabSliderNew from "@/app/components/base/tab-slider-new";
-import LabelFilter from "@/app/components/tools/labels/filter";
-import Input from "@/app/components/base/input";
-import ProviderDetail from "@/app/components/tools/provider/detail";
-import Empty from "@/app/components/plugins/marketplace/empty";
-import CustomCreateCard from "@/app/components/tools/provider/custom-create-card";
-import WorkflowToolEmpty from "@/app/components/tools/add-tool-modal/empty";
-import Card from "@/app/components/plugins/card";
-import CardMoreInfo from "@/app/components/plugins/card/card-more-info";
-import PluginDetailPanel from "@/app/components/plugins/plugin-detail-panel";
-import { useSelector as useAppContextSelector } from "@/context/app-context";
-import { useAllToolProviders } from "@/service/use-tools";
+'use client'
+import { useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import type { Collection } from './types'
+import Marketplace from './marketplace'
+import cn from '@/utils/classnames'
+import { useTabSearchParams } from '@/hooks/use-tab-searchparams'
+import TabSliderNew from '@/app/components/base/tab-slider-new'
+import LabelFilter from '@/app/components/tools/labels/filter'
+import Input from '@/app/components/base/input'
+import ProviderDetail from '@/app/components/tools/provider/detail'
+import Empty from '@/app/components/plugins/marketplace/empty'
+import CustomCreateCard from '@/app/components/tools/provider/custom-create-card'
+import WorkflowToolEmpty from '@/app/components/tools/add-tool-modal/empty'
+import Card from '@/app/components/plugins/card'
+import CardMoreInfo from '@/app/components/plugins/card/card-more-info'
+import PluginDetailPanel from '@/app/components/plugins/plugin-detail-panel'
+import { useSelector as useAppContextSelector } from '@/context/app-context'
+import { useAllToolProviders } from '@/service/use-tools'
 import {
   useInstalledPluginList,
   useInvalidateInstalledPluginList,
-} from "@/service/use-plugins";
+} from '@/service/use-plugins'
 
 const ProviderList = () => {
-  const { t } = useTranslation();
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { enable_marketplace } = useAppContextSelector((s) => s.systemFeatures);
+  const { t } = useTranslation()
+  const containerRef = useRef<HTMLDivElement>(null)
+  const { enable_marketplace } = useAppContextSelector(s => s.systemFeatures)
 
   const [activeTab, setActiveTab] = useTabSearchParams({
-    defaultTab: "builtin",
-  });
+    defaultTab: 'builtin',
+  })
   const options = [
-    { value: "builtin", text: t("tools.type.builtIn") },
-    { value: "api", text: t("tools.type.custom") },
-    { value: "workflow", text: t("tools.type.workflow") },
-  ];
-  const [tagFilterValue, setTagFilterValue] = useState<string[]>([]);
+    { value: 'builtin', text: t('tools.type.builtIn') },
+    { value: 'api', text: t('tools.type.custom') },
+    { value: 'workflow', text: t('tools.type.workflow') },
+  ]
+  const [tagFilterValue, setTagFilterValue] = useState<string[]>([])
   const handleTagsChange = (value: string[]) => {
-    setTagFilterValue(value);
-  };
-  const [keywords, setKeywords] = useState<string>("");
+    setTagFilterValue(value)
+  }
+  const [keywords, setKeywords] = useState<string>('')
   const handleKeywordsChange = (value: string) => {
-    setKeywords(value);
-  };
-  const { data: collectionList = [], refetch } = useAllToolProviders();
+    setKeywords(value)
+  }
+  const { data: collectionList = [], refetch } = useAllToolProviders()
   const filteredCollectionList = useMemo(() => {
     return collectionList.filter((collection) => {
-      if (collection.type !== activeTab) return false;
+      if (collection.type !== activeTab) return false
       if (
-        tagFilterValue.length > 0 &&
-        (!collection.labels ||
-          collection.labels.every((label) => !tagFilterValue.includes(label)))
+        tagFilterValue.length > 0
+        && (!collection.labels
+          || collection.labels.every(label => !tagFilterValue.includes(label)))
       )
-        return false;
-      if (keywords)
-        return Object.values(collection.label).some((value) =>
-          value.toLowerCase().includes(keywords.toLowerCase())
-        );
-      return true;
-    });
-  }, [activeTab, tagFilterValue, keywords, collectionList]);
+        return false
+      if (keywords) {
+ return Object.values(collection.label).some(value =>
+          value.toLowerCase().includes(keywords.toLowerCase()),
+        )
+}
+      return true
+    })
+  }, [activeTab, tagFilterValue, keywords, collectionList])
 
   const [currentProvider, setCurrentProvider] = useState<
     Collection | undefined
-  >();
-  const { data: pluginList } = useInstalledPluginList();
-  const invalidateInstalledPluginList = useInvalidateInstalledPluginList();
+  >()
+  const { data: pluginList } = useInstalledPluginList()
+  const invalidateInstalledPluginList = useInvalidateInstalledPluginList()
   const currentPluginDetail = useMemo(() => {
     const detail = pluginList?.plugins.find(
-      (plugin) => plugin.plugin_id === currentProvider?.plugin_id
-    );
-    return detail;
-  }, [currentProvider?.plugin_id, pluginList?.plugins]);
+      plugin => plugin.plugin_id === currentProvider?.plugin_id,
+    )
+    return detail
+  }, [currentProvider?.plugin_id, pluginList?.plugins])
 
   return (
     <>
-      <div className="relative h-[calc(100vh-56px)] overflow-auto px-4 pb-4 bg-default-background">
-        <div className="sticky top-0 z-20 bg-default-background pt-4 border-b-2 border-default-background">
+      <div className="relative h-[calc(100vh-56px)] overflow-auto bg-default-background px-4 pb-4">
+        <div className="sticky top-0 z-20 border-b-2 border-default-background bg-default-background pt-4">
           <div
             className={cn(
-              "flex flex-wrap items-center justify-between gap-y-2 bg-background-body px-12 pb-2 pt-4 leading-[56px] rounded-t-xl",
-              currentProvider && "pr-6"
+              'flex flex-wrap items-center justify-between gap-y-2 rounded-t-xl bg-background-body px-12 pb-2 pt-4 leading-[56px]',
+              currentProvider && 'pr-6',
             )}
           >
             <TabSliderNew
               value={activeTab}
               onChange={(state) => {
-                setActiveTab(state);
-                if (state !== activeTab) setCurrentProvider(undefined);
+                setActiveTab(state)
+                if (state !== activeTab) setCurrentProvider(undefined)
               }}
               options={options}
             />
@@ -98,38 +99,38 @@ const ProviderList = () => {
                 showClearIcon
                 wrapperClassName="w-[200px]"
                 value={keywords}
-                onChange={(e) => handleKeywordsChange(e.target.value)}
-                onClear={() => handleKeywordsChange("")}
+                onChange={e => handleKeywordsChange(e.target.value)}
+                onClear={() => handleKeywordsChange('')}
               />
             </div>
           </div>
         </div>
         <div
           ref={containerRef}
-          className="bg-background-body min-h-[calc(100%-56px-40px)] relative"
+          className="relative min-h-[calc(100%-56px-60px)] bg-background-body"
         >
-          {(filteredCollectionList.length > 0 || activeTab !== "builtin") && (
+          {(filteredCollectionList.length > 0 || activeTab !== 'builtin') && (
             <div
               className={cn(
-                "grid grid-cols-1 content-start gap-4 px-12 pb-4 pt-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4",
-                !filteredCollectionList.length &&
-                  activeTab === "workflow" &&
-                  "grow"
+                'grid grid-cols-1 content-start gap-4 px-12 pb-4 pt-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4',
+                !filteredCollectionList.length
+                  && activeTab === 'workflow'
+                  && 'grow',
               )}
             >
-              {activeTab === "api" && (
+              {activeTab === 'api' && (
                 <CustomCreateCard onRefreshData={refetch} />
               )}
-              {filteredCollectionList.map((collection) => (
+              {filteredCollectionList.map(collection => (
                 <div
                   key={collection.id}
                   onClick={() => setCurrentProvider(collection)}
                 >
                   <Card
                     className={cn(
-                      "cursor-pointer border-[1.5px] border-transparent",
-                      currentProvider?.id === collection.id &&
-                        "border-components-option-card-option-selected-border"
+                      'cursor-pointer border-[1.5px] border-transparent',
+                      currentProvider?.id === collection.id
+                        && 'border-components-option-card-option-selected-border',
                     )}
                     hideCornerMark
                     payload={
@@ -137,10 +138,10 @@ const ProviderList = () => {
                         ...collection,
                         brief: collection.description,
                         org: collection.plugin_id
-                          ? collection.plugin_id.split("/")[0]
-                          : "",
+                          ? collection.plugin_id.split('/')[0]
+                          : '',
                         name: collection.plugin_id
-                          ? collection.plugin_id.split("/")[1]
+                          ? collection.plugin_id.split('/')[1]
                           : collection.name,
                       } as any
                     }
@@ -148,27 +149,27 @@ const ProviderList = () => {
                   />
                 </div>
               ))}
-              {!filteredCollectionList.length && activeTab === "workflow" && (
+              {!filteredCollectionList.length && activeTab === 'workflow' && (
                 <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                   <WorkflowToolEmpty />
                 </div>
               )}
             </div>
           )}
-          {!filteredCollectionList.length && activeTab === "builtin" && (
+          {!filteredCollectionList.length && activeTab === 'builtin' && (
             <Empty
               lightCard
-              text={t("tools.noTools")}
+              text={t('tools.noTools')}
               className="h-[224px] px-12"
             />
           )}
-          {enable_marketplace && activeTab === "builtin" && (
+          {enable_marketplace && activeTab === 'builtin' && (
             <Marketplace
               onMarketplaceScroll={() => {
                 containerRef.current?.scrollTo({
                   top: containerRef.current.scrollHeight,
-                  behavior: "smooth",
-                });
+                  behavior: 'smooth',
+                })
               }}
               searchPluginText={keywords}
               filterPluginTags={tagFilterValue}
@@ -189,7 +190,7 @@ const ProviderList = () => {
         onHide={() => setCurrentProvider(undefined)}
       />
     </>
-  );
-};
-ProviderList.displayName = "ToolProviderList";
-export default ProviderList;
+  )
+}
+ProviderList.displayName = 'ToolProviderList'
+export default ProviderList
