@@ -49,35 +49,14 @@ const PluginItem: FC<Props> = ({ className, plugin }) => {
     meta,
     plugin_id,
   } = plugin;
-  const {
-    category,
-    author,
-    name,
-    label,
-    description,
-    icon,
-    verified,
-    meta: declarationMeta,
-  } = plugin.declaration;
+  const { category, author, name, label, description, icon, verified } =
+    plugin.declaration;
 
   const orgName = useMemo(() => {
     return [PluginSource.github, PluginSource.marketplace].includes(source)
       ? author
       : "";
   }, [source, author]);
-
-  const { langeniusVersionInfo } = useAppContext();
-
-  const isDifyVersionCompatible = useMemo(() => {
-    if (!langeniusVersionInfo.current_version) return true;
-    return gte(
-      langeniusVersionInfo.current_version,
-      declarationMeta.minimum_dify_version ?? "0.0.0"
-    );
-  }, [
-    declarationMeta.minimum_dify_version,
-    langeniusVersionInfo.current_version,
-  ]);
 
   const handleDelete = () => {
     refreshPluginList({ category } as any);
@@ -100,12 +79,7 @@ const PluginItem: FC<Props> = ({ className, plugin }) => {
         setCurrentPluginID(plugin.plugin_id);
       }}
     >
-      <div
-        className={cn(
-          "hover-bg-components-panel-on-panel-item-bg relative rounded-xl border-[0.5px] border-components-panel-border bg-components-panel-on-panel-item-bg p-4 pb-3 shadow-xs",
-          className
-        )}
-      >
+      <div className={cn("relative rounded-xl p-4 pb-3", className)}>
         <CornerMark text={categoriesMap[category].label} />
         {/* Header */}
         <div className="flex">
@@ -121,18 +95,6 @@ const PluginItem: FC<Props> = ({ className, plugin }) => {
               <Title title={title} />
               {verified && (
                 <RiVerifiedBadgeLine className="ml-0.5 h-4 w-4 shrink-0 text-text-accent" />
-              )}
-              {!isDifyVersionCompatible && (
-                <Tooltip
-                  popupContent={t("plugin.difyVersionNotCompatible", {
-                    minimalDifyVersion: declarationMeta.minimum_dify_version,
-                  })}
-                >
-                  <RiErrorWarningLine
-                    color="red"
-                    className="ml-0.5 h-4 w-4 shrink-0 text-text-accent"
-                  />
-                </Tooltip>
               )}
               <Badge
                 className="ml-1 shrink-0"

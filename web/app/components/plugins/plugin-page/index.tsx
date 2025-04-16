@@ -166,13 +166,13 @@ const PluginPage = ({ plugins, marketplace }: PluginPageProps) => {
         "relative flex grow flex-col overflow-y-auto border-t border-divider-subtle",
         isPluginsTab
           ? "rounded-t-xl bg-components-panel-bg"
-          : "bg-background-body"
+          : "bg-background-body bg-default-background"
       )}
     >
       <div
         className={cn(
           "sticky top-0 z-10 flex min-h-[60px] items-center gap-1 self-stretch bg-components-panel-bg px-12 pb-2 pt-4",
-          isExploringMarketplace && "bg-background-body"
+          isExploringMarketplace && "bg-background-body bg-default-background"
         )}
       >
         <div className="flex w-full items-center justify-between">
@@ -188,7 +188,7 @@ const PluginPage = ({ plugins, marketplace }: PluginPageProps) => {
             />
           </div>
           <div className="flex shrink-0 items-center gap-1">
-            {isExploringMarketplace && (
+            {/* {isExploringMarketplace && (
               <>
                 <Link
                   href={`https://docs.dify.ai/${
@@ -203,7 +203,7 @@ const PluginPage = ({ plugins, marketplace }: PluginPageProps) => {
                 </Link>
                 <div className="mx-2 h-3.5 w-[1px] bg-divider-regular"></div>
               </>
-            )}
+            )} */}
             <PluginTasks />
             {canManagement && (
               <InstallPluginDropdown

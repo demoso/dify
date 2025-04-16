@@ -95,11 +95,11 @@ const InstallPluginDropdown = ({ onSwitchToMarketplaceTab }: Props) => {
                       },
                     ]
                   : []),
-                {
-                  icon: Github,
-                  text: t("plugin.source.github"),
-                  action: "github",
-                },
+                // {
+                //   icon: Github,
+                //   text: t("plugin.source.github"),
+                //   action: "github",
+                // },
                 {
                   icon: FileZip,
                   text: t("plugin.source.local"),
