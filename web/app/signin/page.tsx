@@ -6,9 +6,8 @@ import NormalForm from './normalForm'
 const SignIn = () => {
   const searchParams = useSearchParams()
   const step = searchParams.get('step')
-
-  if (step === 'next')
-    return <OneMoreStep />
+  console.log(step)
+  if (step === 'next') return <OneMoreStep />
   return <NormalForm />
 }
 
