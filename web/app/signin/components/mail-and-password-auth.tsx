@@ -68,10 +68,10 @@ export default function MailAndPasswordAuth({
         remember_me: true,
       }
       if (isInvite) {
- loginData.invite_token = decodeURIComponent(
+        loginData.invite_token = decodeURIComponent(
           searchParams.get('invite_token') as string,
         )
-}
+      }
       const res = await login({
         url: '/login',
         body: loginData,
@@ -135,7 +135,7 @@ export default function MailAndPasswordAuth({
         </div>
       </div>
 
-      <div className="mb-3">
+      <div className="mb-6">
         <label
           htmlFor="password"
           className="my-2 flex items-center justify-between"

@@ -170,7 +170,7 @@ const NormalForm = () => {
 
   return (
     <>
-      <div className="mx-auto mt-8 w-full">
+      <div className="mx-auto mt-2 w-full">
         {/* {isInviteLink ? (
           <div className="mx-auto w-full">
             <h2 className="title-4xl-semi-bold text-text-primary">
@@ -196,7 +196,7 @@ const NormalForm = () => {
         <div className="mx-auto w-full">
           <h2 className="title-4xl-semi-bold text-text-primary">欢迎回来</h2>
           <p className="body-md-regular mt-2 text-text-tertiary">
-            请登录您的账号
+            请登录账号管理您的AI应用
           </p>
         </div>
 
